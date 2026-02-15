@@ -2,7 +2,8 @@ const CACHE_NAME = 'fahhhh-sound-v1';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/manifest.json'
+  '/manifest.json',
+  '/fahh.mp3'
 ];
 
 // Install event - cache files
