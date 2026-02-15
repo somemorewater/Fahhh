@@ -187,74 +187,33 @@
     </div>
 
     <script>
-        // Audio Context for generating sound
-        let audioContext;
+        // Audio element for playing MP3
+        let audio;
         let deferredPrompt;
 
-        // Initialize audio context on first user interaction
+        // Initialize audio element
         function initAudio() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            if (!audio) {
+                audio = new Audio('fahh.mp3');
+                audio.preload = 'auto';
             }
         }
 
-        // Generate and play "fahhhh" sound
+        // Play "fahhhh" sound from MP3
         function playFahhhSound() {
             initAudio();
-
-            const currentTime = audioContext.currentTime;
             
-            // Create oscillator for the "f" consonant (noise-like)
-            const noiseNode = audioContext.createBufferSource();
-            const noiseBuffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.1, audioContext.sampleRate);
-            const noiseData = noiseBuffer.getChannelData(0);
-            for (let i = 0; i < noiseData.length; i++) {
-                noiseData[i] = Math.random() * 2 - 1;
-            }
-            noiseNode.buffer = noiseBuffer;
-
-            const noiseFilter = audioContext.createBiquadFilter();
-            noiseFilter.type = 'bandpass';
-            noiseFilter.frequency.value = 2000;
-            noiseFilter.Q.value = 1;
-
-            const noiseGain = audioContext.createGain();
-            noiseGain.gain.setValueAtTime(0.3, currentTime);
-            noiseGain.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.1);
-
-            noiseNode.connect(noiseFilter);
-            noiseFilter.connect(noiseGain);
-            noiseGain.connect(audioContext.destination);
-            noiseNode.start(currentTime);
-            noiseNode.stop(currentTime + 0.1);
-
-            // Create oscillator for the "ahhh" vowel
-            const oscillator = audioContext.createOscillator();
-            oscillator.type = 'sawtooth';
-            oscillator.frequency.setValueAtTime(300, currentTime + 0.05);
-            oscillator.frequency.exponentialRampToValueAtTime(250, currentTime + 0.8);
-
-            // Create gain node for volume envelope
-            const gainNode = audioContext.createGain();
-            gainNode.gain.setValueAtTime(0, currentTime + 0.05);
-            gainNode.gain.linearRampToValueAtTime(0.3, currentTime + 0.15);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.8);
-
-            // Create filter for formants
-            const filter = audioContext.createBiquadFilter();
-            filter.type = 'bandpass';
-            filter.frequency.value = 800;
-            filter.Q.value = 2;
-
-            // Connect the nodes
-            oscillator.connect(filter);
-            filter.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-
-            // Start and stop
-            oscillator.start(currentTime + 0.05);
-            oscillator.stop(currentTime + 0.8);
+            // Reset audio to beginning and play
+            audio.currentTime = 0;
+            audio.play().catch(err => {
+                console.log('Audio play failed:', err);
+            });
         }
+
+        // Preload the audio file on page load
+        window.addEventListener('load', () => {
+            initAudio();
+        });
 
         // Create ripple effect
         function createRipple(x, y) {
