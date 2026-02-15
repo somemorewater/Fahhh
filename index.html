@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#6366f1">
+    <title>Fahhhh Sound Player</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .sound-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 5rem;
+            font-weight: bold;
+            margin: 2rem 0;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+            transition: transform 0.1s ease;
+        }
+
+        .sound-text.active {
+            transform: scale(1.2);
+            animation: bounce 0.3s ease;
+        }
+
+        .instruction {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2rem;
+            margin-top: 2rem;
+        }
+
+        .install-prompt {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1000;
+            animation: slideUp 0.3s ease;
+        }
+
+        .install-prompt.show {
+            display: flex;
+        }
+
+        .install-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .install-button:hover {
+            background: #764ba2;
+        }
+
+        .close-button {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            pointer-events: none;
+            transform: scale(0);
+            animation: rippleEffect 0.6s ease-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.3);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateX(-50%) translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes rippleEffect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .status.offline {
+            background: rgba(255, 100, 100, 0.3);
+        }
+
+        .status.online {
+            background: rgba(100, 255, 100, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="status" id="status">Online</div>
+
+    <div class="container">
+        <h1>🔊 Sound Player</h1>
+        <div class="sound-text" id="soundText">FAHHHH</div>
+        <p class="instruction">Click anywhere to play!</p>
+    </div>
+
+    <div class="install-prompt" id="installPrompt">
+        <span>📱 Install this app for offline use</span>
+        <button class="install-button" id="installButton">Install</button>
+        <button class="close-button" id="closeButton">×</button>
+    </div>
+
+    <script>
+        // Audio Context for generating sound
+        let audioContext;
+        let deferredPrompt;
+
+        // Initialize audio context on first user interaction
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        // Generate and play "fahhhh" sound
+        function playFahhhSound() {
+            initAudio();
+
+            const currentTime = audioContext.currentTime;
+            
+            // Create oscillator for the "f" consonant (noise-like)
+            const noiseNode = audioContext.createBufferSource();
+            const noiseBuffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.1, audioContext.sampleRate);
+            const noiseData = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < noiseData.length; i++) {
+                noiseData[i] = Math.random() * 2 - 1;
+            }
+            noiseNode.buffer = noiseBuffer;
+
+            const noiseFilter = audioContext.createBiquadFilter();
+            noiseFilter.type = 'bandpass';
+            noiseFilter.frequency.value = 2000;
+            noiseFilter.Q.value = 1;
+
+            const noiseGain = audioContext.createGain();
+            noiseGain.gain.setValueAtTime(0.3, currentTime);
+            noiseGain.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.1);
+
+            noiseNode.connect(noiseFilter);
+            noiseFilter.connect(noiseGain);
+            noiseGain.connect(audioContext.destination);
+            noiseNode.start(currentTime);
+            noiseNode.stop(currentTime + 0.1);
+
+            // Create oscillator for the "ahhh" vowel
+            const oscillator = audioContext.createOscillator();
+            oscillator.type = 'sawtooth';
+            oscillator.frequency.setValueAtTime(300, currentTime + 0.05);
+            oscillator.frequency.exponentialRampToValueAtTime(250, currentTime + 0.8);
+
+            // Create gain node for volume envelope
+            const gainNode = audioContext.createGain();
+            gainNode.gain.setValueAtTime(0, currentTime + 0.05);
+            gainNode.gain.linearRampToValueAtTime(0.3, currentTime + 0.15);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.8);
+
+            // Create filter for formants
+            const filter = audioContext.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.value = 800;
+            filter.Q.value = 2;
+
+            // Connect the nodes
+            oscillator.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            // Start and stop
+            oscillator.start(currentTime + 0.05);
+            oscillator.stop(currentTime + 0.8);
+        }
+
+        // Create ripple effect
+        function createRipple(x, y) {
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.style.width = '20px';
+            ripple.style.height = '20px';
+            document.body.appendChild(ripple);
+
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
+
+        // Handle click/tap
+        document.body.addEventListener('click', (e) => {
+            playFahhhSound();
+            
+            const soundText = document.getElementById('soundText');
+            soundText.classList.add('active');
+            setTimeout(() => {
+                soundText.classList.remove('active');
+            }, 300);
+
+            createRipple(e.clientX, e.clientY);
+        });
+
+        // PWA Installation
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').classList.add('show');
+        });
+
+        document.getElementById('installButton').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response: ${outcome}`);
+                deferredPrompt = null;
+                document.getElementById('installPrompt').classList.remove('show');
+            }
+        });
+
+        document.getElementById('closeButton').addEventListener('click', () => {
+            document.getElementById('installPrompt').classList.remove('show');
+        });
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('Service Worker registered successfully:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
+
+        // Online/Offline status
+        function updateOnlineStatus() {
+            const status = document.getElementById('status');
+            if (navigator.onLine) {
+                status.textContent = 'Online';
+                status.className = 'status online';
+            } else {
+                status.textContent = 'Offline';
+                status.className = 'status offline';
+            }
+        }
+
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        updateOnlineStatus();
+    </script>
+</body>
+</html>
