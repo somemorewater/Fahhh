@@ -6,7 +6,7 @@ const urlsToCache = [
   '/fahh.mp3'
 ];
 
-// Install event - cache files
+// Install event
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
