@@ -8,7 +8,7 @@ A Progressive Web App that plays a "fahhhh" sound whenever you click anywhere on
 - Installable as a Progressive Web App
 - Works completely offline after installation
 - Shows online/offline status
-- 🌐 No external dependencies - all audio generated in-browser
+- No external dependencies - all audio generated in-browser
 
 ## How to Install in Chrome
 
