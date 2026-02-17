@@ -69,7 +69,7 @@ Once installed, this app works completely offline because:
 
 ## Browser Support
 
-- ✅ Chrome (Desktop & Android) - Full support
+- Chrome (Desktop & Android) - Full support
 - ✅ Edge - Full support
 - ✅ Safari (iOS) - Install via "Add to Home Screen"
 - ✅ Firefox - Works but limited PWA support
