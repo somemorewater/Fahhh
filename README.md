@@ -85,12 +85,5 @@ To test locally:
 
 Note: Service Workers require HTTPS in production, but work on `localhost` for development.
 
-## Sound Generation
-
-The "fahhhh" sound is created using the Web Audio API:
-- **"F" consonant**: White noise filtered through a bandpass filter
-- **"Ahhh" vowel**: Sawtooth wave oscillator with frequency modulation
-- Total duration: ~0.8 seconds
-- No audio files needed!
 
 Enjoy your offline sound player! 🎵
