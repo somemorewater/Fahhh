@@ -50,7 +50,6 @@ A Progressive Web App that plays a "fahhhh" sound whenever you click anywhere on
 
 ## Technical Details
 
-- Uses **Web Audio API** to generate sound synthetically (no audio files needed)
 - **Service Worker** enables offline functionality
 - **Manifest.json** makes it installable as a PWA
 - All code is self-contained in HTML, CSS, and JavaScript
