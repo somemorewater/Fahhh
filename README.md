@@ -86,4 +86,4 @@ To test locally:
 Note: Service Workers require HTTPS in production, but work on `localhost` for development.
 
 
-Enjoy your offline sound player! 🎵
+Enjoy your offline fahhhhh!
