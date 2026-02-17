@@ -4,7 +4,7 @@ A Progressive Web App that plays a "fahhhh" sound whenever you click anywhere on
 
 ## Features
 
-- 🔊 Click anywhere to play the "fahhhh" sound
+- Click anywhere to play the "fahhhh" sound
 - 📱 Installable as a Progressive Web App
 - 💾 Works completely offline after installation
 - 🎨 Beautiful gradient UI with animations
