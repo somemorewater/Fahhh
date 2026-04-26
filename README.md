@@ -21,7 +21,7 @@ A Progressive Web App that plays a "fahhhh" sound whenever you click anywhere on
 5. The app will open in its own window and be added to your applications
 
 **Alternative method:**
-1. Click the **three dots menu** (⋮) in the top-right corner
+1. Click the **three dots menu** in the top-right corner
 2. Select **"Install Fahhhh Sound Player..."** or **"Save and Share" → "Install app"**
 3. Click **"Install"** in the dialog
 
