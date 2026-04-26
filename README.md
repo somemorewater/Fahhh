@@ -1,4 +1,4 @@
-# Fahhhh PWA
+# Fahhhh
 
 A Progressive Web App that plays a "fahhhh" sound whenever you click anywhere on the screen. Works offline after installation!
 
